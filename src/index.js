@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Patients from './Pages/Patients'
+import PatientsContainer from './Pages/PatientsContainer'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Patients />
+    <PatientsContainer />
   </React.StrictMode>,
   document.getElementById('root')
 )
