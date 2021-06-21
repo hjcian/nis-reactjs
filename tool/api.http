@@ -1,0 +1,16 @@
+@host=localhost
+@port=3333
+
+### PATCH
+PATCH http://{{host}}:{{port}}/patients/1 HTTP/1.1
+content-type: application/json
+
+{
+    "orders": [
+        "amy 超過120請施打8u",
+        "amy 超過120請施打8u",
+        "amy 超過120請施打8u",
+        "amy 超過120請施打8u",
+        "amy 9點要睡覺"
+    ]
+}
