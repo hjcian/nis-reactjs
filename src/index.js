@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PatientsContainer from './Pages/PatientsContainer'
+import PatientsContainer from './Components/PatientsContainer'
 
 ReactDOM.render(
   <React.StrictMode>

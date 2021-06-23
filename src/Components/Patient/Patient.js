@@ -4,6 +4,9 @@ import Button from '@material-ui/core/Button'
 import Avatar from '@material-ui/core/Avatar'
 import Dialog from '@material-ui/core/Dialog'
 import Typography from '@material-ui/core/Typography'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -35,11 +38,18 @@ const submitOrders = async (id, orders) => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    border: '1px solid',
     display: 'flex'
   },
   nameContainer: {
+    display: 'flex',
     width: '15vw'
+  },
+  avatar: {
+    width: theme.spacing(3),
+    height: theme.spacing(3)
+  },
+  avatarName: {
+    margin: '0'
   },
   orderTitle: {
     display: 'grid',
@@ -99,15 +109,20 @@ const Patient = ({ id, name }) => {
   const canSubmit = saveds.every(ele => ele) && edited
 
   return (
-    <Box className={classes.root}>
+    <ListItem className={classes.root} button onClick={handleClickOpen}>
       <Box className={classes.nameContainer}>
-        <Button className={classes.nameClicker} onClick={handleClickOpen}>
-          <Avatar>{name[0]}</Avatar>
-          {name}
-        </Button>
+        <ListItemAvatar>
+          <Avatar className={classes.avatar}>{name[0]}</Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          className={classes.avatarName}
+          primary={name}
+        />
       </Box>
 
-      <Dialog onClose={handleClose} open={open}>
+      <Dialog
+        onClose={handleClose} open={open}
+      >
         <Box className={classes.orderTitle} onClose={handleClose}>
           <Typography
             className={classes.orderText}
@@ -132,7 +147,7 @@ const Patient = ({ id, name }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </ListItem>
   )
 }
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 
 const OrderTextField = ({ idx, order, updateOrder, updateSavedByIdx }) => {
   const [saved, setSaved] = useState(true)
@@ -18,7 +19,7 @@ const OrderTextField = ({ idx, order, updateOrder, updateSavedByIdx }) => {
   }
 
   return (
-    <div>
+    <Box>
       <TextField
         type='text'
         value={orderText}
@@ -28,7 +29,7 @@ const OrderTextField = ({ idx, order, updateOrder, updateSavedByIdx }) => {
       <Button onClick={handleSave} disabled={saved}>
         Save
       </Button>
-    </div>
+    </Box>
   )
 }
 
