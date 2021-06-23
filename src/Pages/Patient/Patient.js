@@ -4,14 +4,34 @@ import Button from '@material-ui/core/Button'
 import Avatar from '@material-ui/core/Avatar'
 import Dialog from '@material-ui/core/Dialog'
 import Typography from '@material-ui/core/Typography'
-// import MuiDialogTitle from '@material-ui/core/DialogTitle'
 
 import DialogContent from '@material-ui/core/DialogContent'
-// import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogActions from '@material-ui/core/DialogActions'
 import { makeStyles } from '@material-ui/core/styles'
 
 import OrderTextField from './OrderTextField'
+
+const HOST = process.env.REACT_APP_BACKEND_SERVER
+const GET_PATIENT = `${HOST}/patients`
+const PATCH_PATIENT = `${HOST}/patients`
+
+const fetchOrders = async (id) => {
+  const resp = await fetch(`${GET_PATIENT}/${id}?fields=orders`)
+  const patientData = await resp.json()
+  return patientData.orders
+}
+
+const submitOrders = async (id, orders) => {
+  const resp = await fetch(`${PATCH_PATIENT}/${id}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ orders: orders })
+    })
+  return resp.status
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,33 +52,36 @@ const useStyles = makeStyles((theme) => ({
     gridColumnStart: 3
   }
 }))
-const Patient = ({ id, name, orders, handleUpdateOrders }) => {
+const Patient = ({ id, name }) => {
   const classes = useStyles()
   const [open, setOpen] = useState(false)
-  const [orderTexts, setOrderTexts] = useState(orders)
-  const [saveds, setSaveds] = useState(orderTexts.map(() => true))
+  const [edited, setEdited] = useState(false)
+  const [orderTexts, setOrderTexts] = useState([])
+  const [saveds, setSaveds] = useState([])
 
-  const handleClickOpen = () => {
+  const handleClickOpen = async () => {
+    // TODO: error handling
+    if (orderTexts.length === 0) {
+      const orders = await fetchOrders(id)
+      setOrderTexts(orders)
+      setSaveds(orders.map(() => true))
+    }
     setOpen(true)
   }
+
+  const handleAddOrder = () => {
+    setOrderTexts([...orderTexts, ''])
+  }
+
   const handleClose = () => {
     setOpen(false)
   }
 
-  const handleAdd = () => {
-    setOrderTexts([...orderTexts, ''])
-  }
-
-  const updateOrder = (i, newOrder) => {
+  const updateSingleOrder = (i, newOrder) => {
     const orders = orderTexts
     orders[i] = newOrder
     setOrderTexts(orders)
-  }
-
-  const handleSubmit = async () => {
-    const status = await handleUpdateOrders(id, orderTexts)
-    console.log(status)
-    setOpen(false)
+    setEdited(true)
   }
 
   const updateSavedByIdx = (idx, isSaved) => {
@@ -66,7 +89,14 @@ const Patient = ({ id, name, orders, handleUpdateOrders }) => {
     setSaveds(updated)
   }
 
-  const canSubmit = saveds.every(ele => ele)
+  const handleSubmit = async () => {
+    // TODO: error handling
+    const status = await submitOrders(id, orderTexts)
+    console.log(status)
+    setOpen(false)
+  }
+
+  const canSubmit = saveds.every(ele => ele) && edited
 
   return (
     <Box className={classes.root}>
@@ -85,14 +115,14 @@ const Patient = ({ id, name, orders, handleUpdateOrders }) => {
             variant='h6'
           >Orders
           </Typography>
-          <Button className={classes.addButton} onClick={handleAdd}>Add</Button>
+          <Button className={classes.addButton} onClick={handleAddOrder}>Add</Button>
         </Box>
         <DialogContent>
           {orderTexts.map((order, idx) => <OrderTextField
             key={idx}
             idx={idx}
             order={order}
-            updateOrder={updateOrder}
+            updateOrder={updateSingleOrder}
             updateSavedByIdx={updateSavedByIdx}
                                           />)}
         </DialogContent>
